@@ -1,7 +1,7 @@
 .vscode
 .DS_Store
 .idea
-.env
+to-do/.env
 
 venv/
 __pycache__/
