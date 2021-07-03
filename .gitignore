@@ -1,0 +1,7 @@
+book.sqlite
+venv/
+__pycache__/
+.vscode
+.DS_Store
+.idea
+.env
