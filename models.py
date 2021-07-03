@@ -8,7 +8,8 @@ db = SQLAlchemy(app)
 
 
 class User(db.Model):
-    pass
+    id = db.Column(db.Integer, primary_key=True)
+
 
 
 class ToDO(db.Model):
