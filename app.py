@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request
 from models import db
 from decouple import config
+from auth import bp as auth_bp
 
 # Flask
 app = Flask(__name__)
@@ -20,7 +21,11 @@ def index():
     '''
     Home page
     '''
-    return "Hello World"
+    return render_template('index.html')
+
+
+# Authentication Blueprint
+app.register_blueprint(auth_bp)
 
 
 if __name__ == "__main__":

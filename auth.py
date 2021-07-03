@@ -16,7 +16,7 @@ def login():
 
 
 # Logout view
-@bp.route('logout', methods=('GET', 'POST'))
+@bp.route('/logout', methods=('GET', 'POST'))
 def logout():
     session.clear()
     return redirect(url_for('index'))
