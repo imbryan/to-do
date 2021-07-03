@@ -12,8 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
 db.init_app(app)
-
-# db.create_all()
+db.create_all()
 
 
 @app.route("/")
@@ -22,7 +21,6 @@ def index():
     Home page
     '''
     return "Hello World"
-
 
 
 if __name__ == "__main__":
