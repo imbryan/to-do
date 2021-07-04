@@ -1,4 +1,4 @@
-from flask import Blueprint, session, redirect, url_for
+from flask import Blueprint, session, redirect, url_for, render_template
 
 bp = Blueprint('auth', __name__)
 
@@ -6,13 +6,13 @@ bp = Blueprint('auth', __name__)
 # Registration view
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-    pass
+    return render_template('auth/register.html')
 
 
 # Login view
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
-    pass
+    return render_template('auth/login.html')
 
 
 # Logout view
