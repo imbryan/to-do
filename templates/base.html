@@ -7,7 +7,7 @@
     <ul>
         <li><a href="{{ url_for('index') }}">Home</a></li>
         {% if g.user %}
-            <li>{{ g.user['username'] }}</li>
+            <li>Hello, <strong>{{ g.user['username'] }}</strong></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
         {% else %}
             <li><a href="{{ url_for('auth.register') }}">Register</a></li>
