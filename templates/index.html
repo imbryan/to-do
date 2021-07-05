@@ -1,9 +1,23 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}Index{% endblock %}</h1>
+    <h1>{% block title %}My To-Do's{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <p>Test</p>
+    {% if todos %}
+        <ul>
+        {% for todo in todos %}
+            <li>{{ todo.text }}</li>
+        {% endfor %}</ul>
+    {% else %}
+        <p>There are no to-do items to show.
+            {% if not g.user %}<a href="{{ url_for('auth.login') }}">Login</a>?{% endif %}</p>
+    {% endif %}
+
+    <form method="post">
+        <label for="add">New to-do item: </label>
+        <input name="todo" id="new" required>
+        <input type="submit" value="Add">
+    </form>
 {% endblock %}

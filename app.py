@@ -1,5 +1,5 @@
-from flask import Flask, redirect, url_for, render_template, request
-from models import db
+from flask import Flask, redirect, url_for, render_template, request, session
+from models import db, User, ToDO
 from decouple import config
 from auth import bp as auth_bp
 
@@ -16,12 +16,18 @@ db.init_app(app)
 db.create_all()
 
 
-@app.route("/")
+@app.route("/", methods=('GET', 'POST'))
 def index():
-    '''
-    Home page
-    '''
-    return render_template('index.html')
+    if request.method == 'POST':
+        return redirect(url_for('index'))
+
+    todos = None
+    try:
+        todos = ToDO.query.filter_by(user_id=session['user_id']).all()
+    except Exception:
+        pass  # No to-do's found
+
+    return render_template('index.html', todos=todos)
 
 
 # Authentication Blueprint
