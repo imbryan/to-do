@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, session
+from flask import Flask, redirect, url_for, render_template, request, session, g
 from models import db, User, ToDO
 from decouple import config
 from auth import bp as auth_bp
@@ -18,9 +18,19 @@ db.create_all()
 
 @app.route("/", methods=('GET', 'POST'))
 def index():
+    # handle forms
     if request.method == 'POST':
+        # user must be logged
+        if g.user:
+            new_todo_text = request.form['new']
+
+            new_todo = ToDO(text=new_todo_text, user_id=session['user_id'])
+            db.session.add(new_todo)
+            db.session.commit()
+        # return redirect for all post requests
         return redirect(url_for('index'))
 
+    # the following handles GET requests
     todos = None
     try:
         todos = ToDO.query.filter_by(user_id=session['user_id']).all()
