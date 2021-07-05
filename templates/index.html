@@ -7,9 +7,15 @@
 {% block content %}
     {% if todos %}
         <ul>
+        {% if g.user %}
         {% for todo in todos %}
-            <li>{{ todo.text }}</li>
-        {% endfor %}</ul>
+            <li>
+            <form method="post" action="{{ url_for('change', id=todo.id) }}">
+                <input name="todotext" id="{{ todo.id }}" value="{{ todo.text }}" required>
+                <input type="submit" value="Update" name="update">
+                <input type="submit" value="Delete" name="delete" onclick="return confirm('Confirm deletion?');">
+            </form></li>
+        {% endfor %}{% endif %}</ul>
     {% else %}
         <p>There are no to-do items to show.
             {% if not g.user %}<a href="{{ url_for('auth.login') }}">Login</a>?{% endif %}</p>

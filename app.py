@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request, session, g
 from models import db, User, ToDO
 from decouple import config
 from auth import bp as auth_bp
+from werkzeug.exceptions import abort
 
 # Flask
 app = Flask(__name__)
@@ -24,9 +25,11 @@ def index():
         if g.user:
             new_todo_text = request.form['new']
 
-            new_todo = ToDO(text=new_todo_text, user_id=session['user_id'])
-            db.session.add(new_todo)
-            db.session.commit()
+            # if there is text present
+            if new_todo_text:
+                new_todo = ToDO(text=new_todo_text, user_id=session['user_id'])
+                db.session.add(new_todo)
+                db.session.commit()
         # return redirect for all post requests
         return redirect(url_for('index'))
 
@@ -38,6 +41,24 @@ def index():
         pass  # No to-do's found
 
     return render_template('index.html', todos=todos)
+
+
+@app.route('/<int:id>/change', methods=('POST',))
+def change(id):
+    if request.method == 'POST':
+        todo = ToDO.query.filter_by(id=id).one()
+
+        # You may only change your own todos
+        if todo.user_id is not session['user_id']:
+            abort(403)
+        else:
+            if 'delete' in request.form:
+                ToDO.query.filter_by(id=id).delete()
+            elif 'update' in request.form:
+                todo.text = request.form['todotext']
+            db.session.commit()
+
+    return redirect(url_for('index'))
 
 
 # Authentication Blueprint
