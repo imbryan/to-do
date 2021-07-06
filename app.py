@@ -41,7 +41,6 @@ def index():
     try:
         todos = ToDO.query.filter_by(user_id=session['user_id'], complete=False).all()
         completed_todos = ToDO.query.filter_by(user_id=session['user_id'], complete=True).all()
-
     except Exception:
         pass  # No to-do's found
 
@@ -57,17 +56,24 @@ def change(id):
         if todo.user_id is not session['user_id']:
             abort(403)
         else:
+            # Delete button was pressed
             if 'delete' in request.form:
                 ToDO.query.filter_by(id=id).delete()
+            # Update button was pressed
             elif 'update' in request.form:
+                # Update text
                 todo.text = request.form['todotext']
 
-                date_text = request.form['date'].split('-')
-                new_date = datetime.date(year=int(date_text[0]), month=int(date_text[1]), day=int(date_text[2]))
+                # Update date
+                if request.form['date']:
+                    date_text = request.form['date'].split('-')
+                    new_date = datetime.date(year=int(date_text[0]), month=int(date_text[1]), day=int(date_text[2]))
 
-                todo.due_date = new_date
+                    todo.due_date = new_date
+            # Mark Complete button was pressed
             elif 'complete' in request.form:
                 todo.complete = True
+            # Mark Incomplete button was pressed
             elif 'restore' in request.form:
                 todo.complete = False
 
