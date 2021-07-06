@@ -28,10 +28,10 @@ def index():
 
             # if there is text present
             if new_todo_text:
-                new_todo = ToDO(text=new_todo_text, user_id=session['user_id'])
+                num_todos = ToDO.query.filter_by(complete=False).count()
+                new_todo = ToDO(text=new_todo_text, user_id=session['user_id'], position=num_todos+1)
                 db.session.add(new_todo)
                 db.session.commit()
-                new_todo.set_position()
         # return redirect for all post requests
         return redirect(url_for('index'))
 
@@ -40,7 +40,7 @@ def index():
     todos = None
     completed_todos = None
     try:
-        todos = ToDO.query.filter_by(user_id=session['user_id'], complete=False).all()
+        todos = ToDO.query.filter_by(user_id=session['user_id'], complete=False).order_by(ToDO.position).all()
         completed_todos = ToDO.query.filter_by(user_id=session['user_id'], complete=True).all()
     except Exception:
         pass  # No to-do's found
@@ -73,16 +73,45 @@ def change(id):
                     todo.due_date = new_date
             # Mark Complete button was pressed
             elif 'complete' in request.form:
-                todo.complete = True
+                todo.complete = True  # mark as complete
+                num_todos = ToDO.query.filter_by(complete=False).count()  # count number of todos
+
+                current_position = todo.position  # the position that has been made empty
+
+                todo.position = -1  # all complete todos will be at position -1
+
+                # from the newly vacant position, all todos below will be moved up by 1 position
+                try:
+                    while current_position <= num_todos:  # until all remaining todos are shuffled up
+                        current_todo = ToDO.query.filter_by(position=current_position+1).one()  # get to-do from below vacant spot
+                        current_todo.position = current_position  # move to-do into vacant spot
+                        current_position += 1  # move on to the next vacant spot
+                        db.session.commit()
+                except Exception:
+                    pass  # if there are no todos
+
             # Mark Incomplete button was pressed
             elif 'restore' in request.form:
+                num_todos = ToDO.query.filter_by(complete=False).count()
                 todo.complete = False
+
+                todo.position = num_todos+1
             # Move item up the list
             elif 'up' in request.form:
-                pass  # ToDO
+                if todo.position > 1:
+                    above_todo = ToDO.query.filter_by(position=todo.position-1).one()
+                    above_todo.position += 1
+
+                    todo.position -= 1
             # Move item down the list
             elif 'down' in request.form:
-                pass  # ToDO
+                num_todos = ToDO.query.filter_by(complete=False).count()
+
+                if todo.position < num_todos:
+                    below_todo = ToDO.query.filter_by(position=todo.position+1).one()
+                    below_todo.position -= 1
+
+                    todo.position += 1
 
             db.session.commit()
 
