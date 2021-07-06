@@ -28,7 +28,7 @@ def index():
 
             # if there is text present
             if new_todo_text:
-                num_todos = ToDO.query.filter_by(complete=False).count()
+                num_todos = ToDO.query.filter_by(complete=False, user_id=session['user_id']).count()
                 new_todo = ToDO(text=new_todo_text, user_id=session['user_id'], position=num_todos+1)
                 db.session.add(new_todo)
                 db.session.commit()
@@ -48,15 +48,16 @@ def index():
     return render_template('index.html', todos=todos, complete=completed_todos)
 
 
+# helper function for filling a vacant position
 def shuffle(pos):
-    num_todos = ToDO.query.filter_by(complete=False).count()  # count number of todos
+    num_todos = ToDO.query.filter_by(complete=False, user_id=session['user_id']).count()  # count number of todos
 
     current_position = 0 + pos  # the position that has been made empty
 
     # from the newly vacant position, all todos below will be moved up by 1 position
     try:
         while current_position <= num_todos:  # until all remaining todos are shuffled up
-            current_todo = ToDO.query.filter_by(position=current_position+1).one()  # get to-do from below vacant spot
+            current_todo = ToDO.query.filter_by(position=current_position+1, user_id=session['user_id']).one()  # get to-do from below vacant spot
             current_todo.position = current_position  # move to-do into vacant spot
             current_position += 1  # move on to the next vacant spot
             db.session.commit()
@@ -103,23 +104,23 @@ def change(id):
 
             # Mark Incomplete button was pressed
             elif 'restore' in request.form:
-                num_todos = ToDO.query.filter_by(complete=False).count()
+                num_todos = ToDO.query.filter_by(complete=False, user_id=session['user_id']).count()
                 todo.complete = False
 
                 todo.position = num_todos+1
             # Move item up the list
             elif 'up' in request.form:
                 if todo.position > 1:
-                    above_todo = ToDO.query.filter_by(position=todo.position-1).one()
+                    above_todo = ToDO.query.filter_by(position=todo.position-1, user_id=session['user_id']).one()
                     above_todo.position += 1
 
                     todo.position -= 1
             # Move item down the list
             elif 'down' in request.form:
-                num_todos = ToDO.query.filter_by(complete=False).count()
+                num_todos = ToDO.query.filter_by(complete=False, user_id=session['user_id']).count()
 
                 if todo.position < num_todos:
-                    below_todo = ToDO.query.filter_by(position=todo.position+1).one()
+                    below_todo = ToDO.query.filter_by(position=todo.position+1, user_id=session['user_id']).one()
                     below_todo.position -= 1
 
                     todo.position += 1
