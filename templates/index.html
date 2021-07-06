@@ -26,8 +26,11 @@
             </form></li>
         {% endfor %}{% endif %}</ul>
     {% else %}
-        <p>You have no {% if complete %}incomplete{% endif %} items.
-            {% if not g.user %}<a href="{{ url_for('auth.login') }}">Login</a>?{% endif %}</p>
+        {% if g.user %}
+        <p>You have no {% if complete %}incomplete{% endif %} items.</p>
+            {% else %}
+            <p>Please <a href="{{ url_for('auth.login') }}">login</a> or <a href="{{url_for('auth.register')}}">register</a>.
+            </p>{% endif %}
     {% endif %}
 
     {% if g.user %}
