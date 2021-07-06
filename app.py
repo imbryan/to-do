@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, session, g
+from flask import Flask, redirect, url_for, render_template, request, session, g, flash
 from models import db, User, ToDO
 from decouple import config
 from auth import bp as auth_bp
@@ -36,7 +36,7 @@ def index():
     # the following handles GET requests
     todos = None
     try:
-        todos = ToDO.query.filter_by(user_id=session['user_id']).all()
+        todos = ToDO.query.filter_by(user_id=session['user_id'], complete=False).all()
     except Exception:
         pass  # No to-do's found
 
@@ -56,6 +56,9 @@ def change(id):
                 ToDO.query.filter_by(id=id).delete()
             elif 'update' in request.form:
                 todo.text = request.form['todotext']
+            elif 'complete' in request.form:
+                todo.complete = True
+
             db.session.commit()
 
     return redirect(url_for('index'))

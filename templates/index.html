@@ -11,8 +11,9 @@
         {% for todo in todos %}
             <li>
             <form method="post" action="{{ url_for('change', id=todo.id) }}">
-                <input name="todotext" id="{{ todo.id }}" value="{{ todo.text }}" required>
-                <input type="submit" value="Update" name="update">
+                <input type="submit" value="Mark Complete" id="complete" name="complete">
+                <input name="todotext" id="todotext" value="{{ todo.text }}" required>
+                <input type="submit" value="Update" id="update" name="update">
                 <input type="submit" value="Delete" name="delete" onclick="return confirm('Confirm deletion?');">
             </form></li>
         {% endfor %}{% endif %}</ul>
