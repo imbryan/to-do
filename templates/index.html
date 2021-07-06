@@ -23,6 +23,14 @@
     {% endif %}
 
     {% if g.user %}
+        {% if complete %}
+        <h4>Completed</h4><ul>
+        {% for todo in complete %}
+            <li><form method="post" action="{{ url_for('change', id=todo.id) }}">
+                <input type="submit" value="Mark Incomplete" id="restore" name="restore"> {{ todo.text }}</form></li>
+        {% endfor %}</ul>
+        {% endif %}
+
         <form method="post">
             <label for="add">New to-do item: </label>
             <input name="new" id="new" required>

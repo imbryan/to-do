@@ -34,13 +34,17 @@ def index():
         return redirect(url_for('index'))
 
     # the following handles GET requests
+
     todos = None
+    completed_todos = None
     try:
         todos = ToDO.query.filter_by(user_id=session['user_id'], complete=False).all()
+        completed_todos = ToDO.query.filter_by(user_id=session['user_id'], complete=True).all()
+
     except Exception:
         pass  # No to-do's found
 
-    return render_template('index.html', todos=todos)
+    return render_template('index.html', todos=todos, complete=completed_todos)
 
 
 @app.route('/<int:id>/change', methods=('POST',))
@@ -58,6 +62,8 @@ def change(id):
                 todo.text = request.form['todotext']
             elif 'complete' in request.form:
                 todo.complete = True
+            elif 'restore' in request.form:
+                todo.complete = False
 
             db.session.commit()
 
