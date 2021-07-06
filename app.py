@@ -48,10 +48,30 @@ def index():
     return render_template('index.html', todos=todos, complete=completed_todos)
 
 
+def shuffle(pos):
+    num_todos = ToDO.query.filter_by(complete=False).count()  # count number of todos
+
+    current_position = 0 + pos  # the position that has been made empty
+
+    # from the newly vacant position, all todos below will be moved up by 1 position
+    try:
+        while current_position <= num_todos:  # until all remaining todos are shuffled up
+            current_todo = ToDO.query.filter_by(position=current_position+1).one()  # get to-do from below vacant spot
+            current_todo.position = current_position  # move to-do into vacant spot
+            current_position += 1  # move on to the next vacant spot
+            db.session.commit()
+    except Exception:
+        return redirect(url_for('index'))  # if there are no todos
+
+
 @app.route('/<int:id>/change', methods=('POST',))
 def change(id):
     if request.method == 'POST':
-        todo = ToDO.query.filter_by(id=id).one()
+        todo = None
+        try:
+            todo = ToDO.query.filter_by(id=id).one()
+        except Exception:
+            return redirect(url_for('index'))  # you shouldn't be on change view
 
         # You may only change your own todos
         if todo.user_id is not session['user_id']:
@@ -59,7 +79,10 @@ def change(id):
         else:
             # Delete button was pressed
             if 'delete' in request.form:
+                pos = 0 + todo.position
                 ToDO.query.filter_by(id=id).delete()
+
+                shuffle(pos)
             # Update button was pressed
             elif 'update' in request.form:
                 # Update text
@@ -74,21 +97,9 @@ def change(id):
             # Mark Complete button was pressed
             elif 'complete' in request.form:
                 todo.complete = True  # mark as complete
-                num_todos = ToDO.query.filter_by(complete=False).count()  # count number of todos
-
-                current_position = todo.position  # the position that has been made empty
+                shuffle(todo.position)
 
                 todo.position = -1  # all complete todos will be at position -1
-
-                # from the newly vacant position, all todos below will be moved up by 1 position
-                try:
-                    while current_position <= num_todos:  # until all remaining todos are shuffled up
-                        current_todo = ToDO.query.filter_by(position=current_position+1).one()  # get to-do from below vacant spot
-                        current_todo.position = current_position  # move to-do into vacant spot
-                        current_position += 1  # move on to the next vacant spot
-                        db.session.commit()
-                except Exception:
-                    pass  # if there are no todos
 
             # Mark Incomplete button was pressed
             elif 'restore' in request.form:

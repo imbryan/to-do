@@ -13,6 +13,8 @@
         {% for todo in todos %}
             <li style="padding-top: 5px; padding-bottom: 5px;">
             <form method="post" action="{{ url_for('change', id=todo.id) }}">
+                <!-- position label for debugging
+                <label>{{todo.position}}</label> -->
                 <input type="submit" value="&uarr;" id="up" name="up">
                 <input type="submit" value="&darr;" id="down" name="down">
                 <input type="submit" value="&check;" id="complete" name="complete">
@@ -24,12 +26,12 @@
             </form></li>
         {% endfor %}{% endif %}</ul>
     {% else %}
-        <p>There are no to-do items to show.
+        <p>You have no {% if complete %}incomplete{% endif %} items.
             {% if not g.user %}<a href="{{ url_for('auth.login') }}">Login</a>?{% endif %}</p>
     {% endif %}
 
     {% if g.user %}
-        <form method="post" style="padding-top: 10px;">
+        <form method="post" style="padding-top: 5px;">
             <label for="new">New to-do item: </label>
             <input name="new" id="new" required>
             <input type="submit" value="Add">
