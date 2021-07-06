@@ -3,6 +3,7 @@ from models import db, User, ToDO
 from decouple import config
 from auth import bp as auth_bp
 from werkzeug.exceptions import abort
+import datetime
 
 # Flask
 app = Flask(__name__)
@@ -60,6 +61,11 @@ def change(id):
                 ToDO.query.filter_by(id=id).delete()
             elif 'update' in request.form:
                 todo.text = request.form['todotext']
+
+                date_text = request.form['date'].split('-')
+                new_date = datetime.date(year=int(date_text[0]), month=int(date_text[1]), day=int(date_text[2]))
+
+                todo.due_date = new_date
             elif 'complete' in request.form:
                 todo.complete = True
             elif 'restore' in request.form:

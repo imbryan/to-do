@@ -13,6 +13,8 @@
             <form method="post" action="{{ url_for('change', id=todo.id) }}">
                 <input type="submit" value="Mark Complete" id="complete" name="complete">
                 <input name="todotext" id="todotext" value="{{ todo.text }}" required>
+                <label for="date">Due: </label>
+                <input type="date" name="date" id="date" value="{{ todo.due_date }}">
                 <input type="submit" value="Update" id="update" name="update">
                 <input type="submit" value="Delete" name="delete" onclick="return confirm('Confirm deletion?');">
             </form></li>
@@ -32,7 +34,7 @@
         {% endif %}
 
         <form method="post">
-            <label for="add">New to-do item: </label>
+            <label for="new">New to-do item: </label>
             <input name="new" id="new" required>
             <input type="submit" value="Add">
         </form>
