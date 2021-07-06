@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 
 {% block header %}
     <h3>{% block title %}My List{% endblock %}</h3>
@@ -6,19 +7,20 @@
 
 {% block content %}
     {% if todos %}
+        <p>You must press "Update" after making changes to an item's text or due date.</p>
         <ul style="list-style-type: none;">
         {% if g.user %}
         {% for todo in todos %}
-            <li>
+            <li style="padding-top: 5px; padding-bottom: 5px;">
             <form method="post" action="{{ url_for('change', id=todo.id) }}">
-                <input type="submit" value="Move Up" id="up" name="up">
-                <input type="submit" value="Move Down" id="down" name="down">
-                <input type="submit" value="Mark Complete" id="complete" name="complete">
+                <input type="submit" value="&uarr;" id="up" name="up">
+                <input type="submit" value="&darr;" id="down" name="down">
+                <input type="submit" value="&check;" id="complete" name="complete">
                 <input name="todotext" id="todotext" value="{{ todo.text }}" required>
                 <label for="date">Due: </label>
                 <input type="date" name="date" id="date" value="{{ todo.due_date }}">
                 <input type="submit" value="Update" id="update" name="update">
-                <input type="submit" value="Delete" name="delete" onclick="return confirm('Confirm deletion?');">
+                <input type="submit" value="&cross;" name="delete" onclick="return confirm('Confirm deletion?');">
             </form></li>
         {% endfor %}{% endif %}</ul>
     {% else %}
@@ -27,18 +29,22 @@
     {% endif %}
 
     {% if g.user %}
-        {% if complete %}
-        <h4>Completed</h4><ul>
-        {% for todo in complete %}
-            <li><form method="post" action="{{ url_for('change', id=todo.id) }}">
-                <input type="submit" value="Mark Incomplete" id="restore" name="restore"> {{ todo.text }}</form></li>
-        {% endfor %}</ul>
-        {% endif %}
-
-        <form method="post">
+        <form method="post" style="padding-top: 10px;">
             <label for="new">New to-do item: </label>
             <input name="new" id="new" required>
             <input type="submit" value="Add">
         </form>
+
+        {% if complete %}
+        <hr />
+        <h4>Completed</h4>
+        <ul style="list-style-type: none;">
+        {% for todo in complete %}
+            <li style="padding-top: 5px; padding-bottom: 5px;">
+                <form method="post" action="{{ url_for('change', id=todo.id) }}">
+                <input type="submit" value="Undo" id="restore" name="restore">
+                    <label for="restore"><s>{{ todo.text }}</s></label></form></li>
+        {% endfor %}</ul>
+        {% endif %}
     {% endif %}
 {% endblock %}
