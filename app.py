@@ -1,5 +1,5 @@
-from flask import Flask, redirect, url_for, render_template, request, session, g, flash
-from models import db, User, ToDO
+from flask import Flask, redirect, url_for, render_template, request, session, g
+from models import db, ToDO
 from decouple import config
 from auth import bp as auth_bp
 from werkzeug.exceptions import abort
