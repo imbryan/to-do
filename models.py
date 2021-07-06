@@ -17,9 +17,23 @@ class User(db.Model):
 
 class ToDO(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    position = db.Column(db.Integer)
     text = db.Column(db.String(150), nullable=False)  # the text content of a To-DO
     due_date = db.Column(db.Date)  # a user set due date for a To-DO
     complete = db.Column(db.Boolean, nullable=False, default=False)  # completed flag for a To-DO
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # each To-DO associates with a user
+
+    def __init__(self):
+        self.position = 0
+        self.position += self.id
+
+    def increment_position(self):
+        self.position += 1
+        db.session.commit()
+
+    def decrement_position(self):
+        if self.position > 0:
+            self.position -= 1
+            db.session.commit()
 
