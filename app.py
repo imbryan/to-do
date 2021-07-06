@@ -31,6 +31,7 @@ def index():
                 new_todo = ToDO(text=new_todo_text, user_id=session['user_id'])
                 db.session.add(new_todo)
                 db.session.commit()
+                new_todo.set_position()
         # return redirect for all post requests
         return redirect(url_for('index'))
 
@@ -76,6 +77,12 @@ def change(id):
             # Mark Incomplete button was pressed
             elif 'restore' in request.form:
                 todo.complete = False
+            # Move item up the list
+            elif 'up' in request.form:
+                pass  # ToDO
+            # Move item down the list
+            elif 'down' in request.form:
+                pass  # ToDO
 
             db.session.commit()
 

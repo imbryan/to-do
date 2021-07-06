@@ -11,6 +11,9 @@
         {% for todo in todos %}
             <li>
             <form method="post" action="{{ url_for('change', id=todo.id) }}">
+                <label>{{ todo.position }}</label>
+                <input type="submit" value="Move Up" id="up" name="up">
+                <input type="submit" value="Move Down" id="down" name="down">
                 <input type="submit" value="Mark Complete" id="complete" name="complete">
                 <input name="todotext" id="todotext" value="{{ todo.text }}" required>
                 <label for="date">Due: </label>
